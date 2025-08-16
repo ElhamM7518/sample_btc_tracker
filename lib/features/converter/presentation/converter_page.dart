@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:sample_btc_tracker/core/core.dart';
 import 'package:sample_btc_tracker/features/btc/bloc/btc_bloc.dart';
 import 'package:sample_btc_tracker/features/converter/bloc/converter_bloc.dart';
+import 'package:sample_btc_tracker/features/converter/presentation/converter_keys.dart';
 import 'package:sample_btc_tracker/features/converter/presentation/widgets/widgets.dart';
 
 class ConverterPage extends StatelessWidget {
@@ -71,7 +72,10 @@ class _ConverterViewState extends State<ConverterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppbar(title: context.l10n.converter),
+      appBar: CustomAppbar(
+        title: context.l10n.converter,
+        showBackButton: false,
+      ),
       body: Padding(
         padding: const EdgeInsetsGeometry.all(16),
         child: BlocConsumer<BtcBloc, BtcState>(
@@ -118,6 +122,8 @@ class _ConverterViewState extends State<ConverterView> {
                       _updateCurrencyController(state.currencyAmount);
                     }
                     final currencyField = CurrencyTextFormField(
+                      key: ConverterKeys.currencyTextFormFieldKey,
+                      popupMenuKey: ConverterKeys.currenciesPopupMenuKey,
                       readOnly: !state.currencyToBtc,
                       selectedCurrency: state.selectedCurrency,
                       currencyTextController: _currencyTextController,
@@ -140,6 +146,7 @@ class _ConverterViewState extends State<ConverterView> {
                       ),
                     );
                     final btcField = BtcTextFormField(
+                      key: ConverterKeys.btcTextFormFieldKey,
                       readOnly: state.currencyToBtc,
                       btcTextController: _btcTextController,
                       onChanged: (value) => _converterBloc.add(

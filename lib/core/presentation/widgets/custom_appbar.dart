@@ -4,7 +4,12 @@ import 'package:sample_btc_tracker/core/utils/extensions/on_context.dart';
 
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  const CustomAppbar({required this.title, super.key});
+  final bool showBackButton;
+  const CustomAppbar({
+    required this.title,
+    this.showBackButton = true,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,12 +17,12 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(title, style: context.textTheme.displayLarge),
       centerTitle: true,
       automaticallyImplyLeading: false,
-      leading: context.canPop()
+      leading: showBackButton
           ? IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded),
               onPressed: context.pop,
             )
-          : const SizedBox(),
+          : null,
     );
   }
 

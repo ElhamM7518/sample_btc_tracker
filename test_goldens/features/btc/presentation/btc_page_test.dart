@@ -1,0 +1,183 @@
+import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:golden_toolkit/golden_toolkit.dart';
+import 'package:sample_btc_tracker/core/core.dart';
+import 'package:sample_btc_tracker/features/btc/btc.dart';
+
+import '../../../material_app_wrapper.dart';
+
+class MockBtcBloc extends MockBloc<BtcEvent, BtcState> implements BtcBloc {}
+
+void main() {
+  late MockBtcBloc mockBtcBloc;
+  final usdCurrencyPrice = CurrencyPriceEntity(
+    currency: Currency.usd,
+    price: 117490,
+    timeStamp: DateTime.parse('2025-08-16T08:00:00.000Z'),
+  );
+  final euroCurrencyPrice = CurrencyPriceEntity(
+    currency: Currency.eur,
+    price: 111474.512,
+    timeStamp: DateTime.parse('2025-08-16T08:00:00.000Z'),
+  );
+  final gbpCurrencyPrice = CurrencyPriceEntity(
+    currency: Currency.gbp,
+    price: 96190.9385000001,
+    timeStamp: DateTime.parse('2025-08-16T08:00:01.000Z'),
+  );
+
+  setUp(() {
+    mockBtcBloc = MockBtcBloc();
+  });
+
+  Widget buildSubject() =>
+      BlocProvider<BtcBloc>.value(value: mockBtcBloc, child: const BtcView());
+
+  for (int i = 0; i < 2; i++) {
+    testGoldens('Initial', (tester) async {
+      whenListen(
+        mockBtcBloc,
+        const Stream<BtcState>.empty(),
+        initialState: const BtcState.initial(),
+      );
+
+      await tester.pumpWidgetBuilder(
+        buildSubject(),
+        wrapper: (widget) =>
+            customMaterialAppWrapper(widget, isDarkMode: i == 0),
+      );
+
+      await multiScreenGolden(
+        tester,
+        '${i == 0 ? 'darkTheme' : 'lightTheme'}/initial_loading/initial_loading',
+      );
+    });
+
+    testGoldens('Loading', (tester) async {
+      whenListen(
+        mockBtcBloc,
+        Stream<BtcState>.value(const BtcState.loading()),
+        initialState: const BtcState.initial(),
+      );
+
+      await tester.pumpWidgetBuilder(
+        buildSubject(),
+        wrapper: (widget) =>
+            customMaterialAppWrapper(widget, isDarkMode: i == 0),
+      );
+
+      await multiScreenGolden(
+        tester,
+        '${i == 0 ? 'darkTheme' : 'lightTheme'}/initial_loading/initial_loading',
+      );
+    });
+
+    testGoldens('NetworkFailure', (tester) async {
+      whenListen(
+        mockBtcBloc,
+        Stream<BtcState>.value(
+          const BtcState.loadFailure(FailureWrapper.networkFailure()),
+        ),
+        initialState: const BtcState.loading(),
+      );
+
+      await tester.pumpWidgetBuilder(
+        buildSubject(),
+        wrapper: (widget) =>
+            customMaterialAppWrapper(widget, isDarkMode: i == 0),
+      );
+
+      await multiScreenGolden(
+        tester,
+        '${i == 0 ? 'darkTheme' : 'lightTheme'}/network_failure/network_failure',
+      );
+    });
+
+    testGoldens('UnknownServerFailure', (tester) async {
+      whenListen(
+        mockBtcBloc,
+        Stream<BtcState>.value(
+          const BtcState.loadFailure(FailureWrapper.unknownServerFailure()),
+        ),
+        initialState: const BtcState.loading(),
+      );
+
+      await tester.pumpWidgetBuilder(
+        buildSubject(),
+        wrapper: (widget) =>
+            customMaterialAppWrapper(widget, isDarkMode: i == 0),
+      );
+
+      await multiScreenGolden(
+        tester,
+        '${i == 0 ? 'darkTheme' : 'lightTheme'}/unknown_failure/unknown_failure',
+      );
+    });
+
+    testGoldens('ServerFailure', (tester) async {
+      whenListen(
+        mockBtcBloc,
+        Stream<BtcState>.value(
+          const BtcState.loadFailure(
+            FailureWrapper.serverFailure(400, 'Invalid Data!'),
+          ),
+        ),
+        initialState: const BtcState.loading(),
+      );
+
+      await tester.pumpWidgetBuilder(
+        buildSubject(),
+        wrapper: (widget) =>
+            customMaterialAppWrapper(widget, isDarkMode: i == 0),
+      );
+
+      await multiScreenGolden(
+        tester,
+        '${i == 0 ? 'darkTheme' : 'lightTheme'}/server_failure/server_failure',
+      );
+    });
+
+    testGoldens('LoadSuccess', (tester) async {
+      whenListen(
+        mockBtcBloc,
+        Stream<BtcState>.value(
+          BtcState.loadSuccess(
+            currencyPrices: [
+              usdCurrencyPrice,
+              euroCurrencyPrice,
+              gbpCurrencyPrice,
+            ],
+            currencyPricesHistory: {
+              Currency.usd: [
+                usdCurrencyPrice.copyWith(
+                  timeStamp: gbpCurrencyPrice.timeStamp,
+                ),
+              ],
+              Currency.gbp: [gbpCurrencyPrice],
+              Currency.eur: [
+                euroCurrencyPrice.copyWith(
+                  timeStamp: gbpCurrencyPrice.timeStamp,
+                ),
+              ],
+            },
+            timeStamp: gbpCurrencyPrice.timeStamp,
+          ),
+        ),
+        initialState: const BtcState.loading(),
+      );
+
+      await tester.pumpWidgetBuilder(
+        buildSubject(),
+        wrapper: (widget) =>
+            customMaterialAppWrapper(widget, isDarkMode: i == 0),
+      );
+
+      await multiScreenGolden(
+        tester,
+        '${i == 0 ? 'darkTheme' : 'lightTheme'}/load_success/load_success',
+      );
+    });
+  }
+}

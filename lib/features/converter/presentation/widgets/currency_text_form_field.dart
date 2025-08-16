@@ -9,23 +9,28 @@ class CurrencyTextFormField extends StatelessWidget {
   final void Function(Currency) onCurrencyChanged;
   final Currency selectedCurrency;
   final bool readOnly;
+  final Key popupMenuKey;
   const CurrencyTextFormField({
     required this.currencyTextController,
     required this.onTextChanged,
     required this.onCurrencyChanged,
     required this.selectedCurrency,
     required this.readOnly,
+    required this.popupMenuKey,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return BaseTextFormField(
+      key: key,
       readOnly: readOnly,
       textController: currencyTextController,
       onChanged: onTextChanged,
       symbol: selectedCurrency.symbol,
       suffix: PopupMenuButton<Currency>(
+        popUpAnimationStyle: AnimationStyle.noAnimation,
+        key: popupMenuKey,
         itemBuilder: (context) => Currency.values
             .map(
               (element) => PopupMenuItem(

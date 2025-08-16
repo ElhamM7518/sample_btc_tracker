@@ -16,6 +16,7 @@ class BtcTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseTextFormField(
+      key: key,
       readOnly: readOnly,
       symbol: '₿',
       onChanged: onChanged,

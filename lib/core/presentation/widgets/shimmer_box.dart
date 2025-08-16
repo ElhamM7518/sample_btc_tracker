@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sample_btc_tracker/core/presentation/theme/app_colors.dart';
+import 'package:sample_btc_tracker/core/core.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
 class ShimmerBox extends StatelessWidget {
@@ -21,11 +21,14 @@ class ShimmerBox extends StatelessWidget {
     return Shimmer(
       duration: const Duration(seconds: 2),
       interval: const Duration(seconds: 1),
+      color: context.isDarkMode ? AppColors.mainDark : AppColors.mainWhite,
       child: Container(
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: AppColors.lightestGray,
+          color: context.isDarkMode
+              ? AppColors.mainDark
+              : AppColors.lightestGray,
           shape: shape,
           borderRadius: shape == BoxShape.circle
               ? null

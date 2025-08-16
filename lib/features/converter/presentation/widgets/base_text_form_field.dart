@@ -20,6 +20,7 @@ class BaseTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      key: key,
       readOnly: readOnly,
       onTapOutside: (pointer) => FocusScope.of(context).unfocus(),
       controller: textController,

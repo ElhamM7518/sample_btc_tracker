@@ -131,14 +131,16 @@ class _CurrencyHistoryViewState extends State<CurrencyHistoryView> {
                         )
                         .toList();
 
-                    final ys = spots.map((s) => s.y).toList()..sort();
+                    final minPrice = spots
+                        .map((s) => s.y)
+                        .reduce((a, b) => a < b ? a : b);
+                    final maxPrice = spots
+                        .map((s) => s.y)
+                        .reduce((a, b) => a > b ? a : b);
 
-                    final minY = ys.first;
-                    final maxY = ys.last;
-
-                    // For better visualization!
-                    final adjustedMinY = minY - 5;
-                    final adjustedMaxY = maxY + 5;
+                    // To showing the chart more user-friendly
+                    final adjustedMinY = minPrice - (maxPrice - minPrice) * 0.3;
+                    final adjustedMaxY = maxPrice + (maxPrice - minPrice) * 0.3;
 
                     return Align(
                       child: SizedBox(
@@ -206,6 +208,8 @@ class _CurrencyHistoryViewState extends State<CurrencyHistoryView> {
                                 sideTitles: SideTitles(
                                   reservedSize: 60,
                                   showTitles: true,
+                                  maxIncluded: false,
+                                  minIncluded: false,
                                   getTitlesWidget: (value, meta) {
                                     return Padding(
                                       padding: const EdgeInsets.all(4),

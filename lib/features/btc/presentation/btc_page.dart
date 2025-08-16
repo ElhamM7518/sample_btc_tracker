@@ -91,16 +91,18 @@ class _BtcViewState extends State<BtcView> {
         listener: (context, state) {
           switch (state) {
             case BtcLoadSuccess(:final currencyPrices):
-              final converterBloc = context.read<ConverterBloc>();
-              converterBloc.add(
-                ConverterEvent.currencyPriceUpdated(
-                  currencyPrices.firstWhere(
-                    (element) =>
-                        element.currency ==
-                        converterBloc.state.selectedCurrency,
+              if (EnvironmentVariables.environment != Environment.test) {
+                final converterBloc = context.read<ConverterBloc>();
+                converterBloc.add(
+                  ConverterEvent.currencyPriceUpdated(
+                    currencyPrices.firstWhere(
+                      (element) =>
+                          element.currency ==
+                          converterBloc.state.selectedCurrency,
+                    ),
                   ),
-                ),
-              );
+                );
+              }
             default:
           }
         },

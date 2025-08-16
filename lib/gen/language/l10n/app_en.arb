@@ -1,0 +1,14 @@
+{
+    "@@locale": "en",
+    "appTitle": "Sample BTC Tracker",
+    "failedToLoadDataErrorMessage": "Failed to Load Data",
+    "tryAgainButtonTitle": "Try Again",
+    "bitcoin": "Bitcoin",
+    "converter": "Converter",
+    "latestUpdate": "Latest update",
+    "networkError": "Network Error! Please check your internet connection.",
+    "unknownError": "Unknown Error! Please try again later.",
+    "serverError": "Server Error!",
+    "btc": "BTC",
+    "convert": "Convert"
+}

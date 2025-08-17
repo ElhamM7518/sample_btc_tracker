@@ -39,7 +39,12 @@ class _BtcViewState extends State<BtcView> {
   }
 
   void _loadData() {
-    _btcBloc.add(const BtcEvent.loaded());
+    switch (_btcBloc.state) {
+      case BtcInitial():
+      case BtcLoadFailure():
+        _btcBloc.add(const BtcEvent.loaded());
+      default:
+    }
   }
 
   @override

@@ -143,104 +143,110 @@ class _CurrencyHistoryViewState extends State<CurrencyHistoryView> {
                     final adjustedMaxY = maxPrice + (maxPrice - minPrice) * 0.3;
 
                     return Align(
-                      child: SizedBox(
-                        height: 300,
-                        child: LineChart(
-                          LineChartData(
-                            minY: adjustedMinY,
-                            maxY: adjustedMaxY,
-                            borderData: FlBorderData(
-                              border: Border(
-                                right: BorderSide(
-                                  color: context.themeData.dividerColor,
-                                ),
-                                bottom: BorderSide(
-                                  color: context.themeData.dividerColor,
-                                ),
-                                top: BorderSide(
-                                  color: context.themeData.dividerColor,
-                                  width: 0.2,
-                                ),
-                                left: BorderSide(
-                                  color: context.themeData.dividerColor,
-                                  width: 0.2,
-                                ),
-                              ),
-                            ),
-                            lineBarsData: [
-                              LineChartBarData(
-                                spots: spots,
-                                color: context.themeData.primaryColor,
-                                dotData: const FlDotData(show: false),
-                                aboveBarData: BarAreaData(
-                                  color:
-                                      context.themeData.scaffoldBackgroundColor,
-                                ),
-                                belowBarData: BarAreaData(
-                                  color:
-                                      context.themeData.scaffoldBackgroundColor,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16),
+                        child: SizedBox(
+                          height: 300,
+                          child: LineChart(
+                            LineChartData(
+                              minY: adjustedMinY,
+                              maxY: adjustedMaxY,
+                              borderData: FlBorderData(
+                                border: Border(
+                                  right: BorderSide(
+                                    color: context.themeData.dividerColor,
+                                  ),
+                                  bottom: BorderSide(
+                                    color: context.themeData.dividerColor,
+                                  ),
+                                  top: BorderSide(
+                                    color: context.themeData.dividerColor,
+                                    width: 0.2,
+                                  ),
+                                  left: BorderSide(
+                                    color: context.themeData.dividerColor,
+                                    width: 0.2,
+                                  ),
                                 ),
                               ),
-                            ],
-                            titlesData: FlTitlesData(
-                              bottomTitles: AxisTitles(
-                                sideTitles: SideTitles(
-                                  showTitles: true,
-                                  getTitlesWidget: (value, meta) {
-                                    final index = value.toInt();
-                                    final time =
-                                        currencyPricesHistory[widget
-                                                .currency]![index]
-                                            .timeStamp;
-                                    return Padding(
-                                      padding: const EdgeInsets.only(top: 6),
-                                      child: Text(
-                                        '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
-                                        style: context.textTheme.labelSmall!
-                                            .copyWith(fontSize: 8),
-                                      ),
-                                    );
-                                  },
+                              lineBarsData: [
+                                LineChartBarData(
+                                  spots: spots,
+                                  color: context.themeData.primaryColor,
+                                  dotData: const FlDotData(show: false),
+                                  aboveBarData: BarAreaData(
+                                    color: context
+                                        .themeData
+                                        .scaffoldBackgroundColor,
+                                  ),
+                                  belowBarData: BarAreaData(
+                                    color: context
+                                        .themeData
+                                        .scaffoldBackgroundColor,
+                                  ),
                                 ),
-                              ),
-                              leftTitles: const AxisTitles(),
-                              rightTitles: AxisTitles(
-                                sideTitles: SideTitles(
-                                  reservedSize: 60,
-                                  showTitles: true,
-                                  maxIncluded: false,
-                                  minIncluded: false,
-                                  getTitlesWidget: (value, meta) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(4),
-                                      child: Text(
-                                        NumberFormat('#,##0').format(value),
-                                        style: context.textTheme.bodySmall,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              topTitles: const AxisTitles(),
-                            ),
-                            lineTouchData: LineTouchData(
-                              touchTooltipData: LineTouchTooltipData(
-                                tooltipBorderRadius: BorderRadius.circular(8),
-                                getTooltipColor: (spot) =>
-                                    context.colorScheme.surface,
-                                getTooltipItems:
-                                    (List<LineBarSpot> touchedSpots) {
-                                      return touchedSpots.map((
-                                        LineBarSpot touchedSpot,
-                                      ) {
-                                        return LineTooltipItem(
-                                          NumberFormat(
-                                            '#,##0.000000',
-                                          ).format(touchedSpot.y),
-                                          context.textTheme.bodyMedium!,
-                                        );
-                                      }).toList();
+                              ],
+                              titlesData: FlTitlesData(
+                                bottomTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    getTitlesWidget: (value, meta) {
+                                      final index = value.toInt();
+                                      final time =
+                                          currencyPricesHistory[widget
+                                                  .currency]![index]
+                                              .timeStamp;
+                                      return Padding(
+                                        padding: const EdgeInsets.only(top: 6),
+                                        child: Text(
+                                          '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
+                                          style: context.textTheme.labelSmall!
+                                              .copyWith(fontSize: 8),
+                                        ),
+                                      );
                                     },
+                                  ),
+                                ),
+                                leftTitles: const AxisTitles(),
+                                rightTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    reservedSize: 60,
+                                    showTitles: true,
+                                    maxIncluded: maxPrice == minPrice,
+                                    minIncluded: maxPrice == minPrice,
+                                    getTitlesWidget: (value, meta) {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: Text(
+                                          NumberFormat('#,##0').format(value),
+                                          style: context.textTheme.bodySmall,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                topTitles: const AxisTitles(),
+                              ),
+                              lineTouchData: LineTouchData(
+                                touchTooltipData: LineTouchTooltipData(
+                                  tooltipPadding: const EdgeInsets.all(2),
+                                  tooltipBorderRadius: BorderRadius.circular(8),
+                                  getTooltipColor: (spot) =>
+                                      context.colorScheme.surface,
+                                  getTooltipItems:
+                                      (List<LineBarSpot> touchedSpots) {
+                                        return touchedSpots.map((
+                                          LineBarSpot touchedSpot,
+                                        ) {
+                                          return LineTooltipItem(
+                                            NumberFormat(
+                                              '#,##0.0',
+                                            ).format(touchedSpot.y),
+                                            context.textTheme.bodySmall!,
+                                          );
+                                        }).toList();
+                                      },
+                                ),
                               ),
                             ),
                           ),

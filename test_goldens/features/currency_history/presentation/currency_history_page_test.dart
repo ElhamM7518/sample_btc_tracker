@@ -141,11 +141,65 @@ void main() {
       timeStamp: DateTime.parse('2025-08-16T08:24:00.000Z'),
     ),
   ];
+  final euroCurrencyPrices = [
+    CurrencyPriceEntity(
+      currency: Currency.eur,
+      price: 111474.512,
+      timeStamp: DateTime.parse('2025-08-16T08:03:00.000Z'),
+    ),
+    CurrencyPriceEntity(
+      currency: Currency.eur,
+      price: 111474.700,
+      timeStamp: DateTime.parse('2025-08-16T08:04:00.000Z'),
+    ),
+    CurrencyPriceEntity(
+      currency: Currency.eur,
+      price: 111474.700,
+      timeStamp: DateTime.parse('2025-08-16T08:05:00.000Z'),
+    ),
+    CurrencyPriceEntity(
+      currency: Currency.eur,
+      price: 111474.700,
+      timeStamp: DateTime.parse('2025-08-16T08:06:00.000Z'),
+    ),
+    CurrencyPriceEntity(
+      currency: Currency.eur,
+      price: 111474.700,
+      timeStamp: DateTime.parse('2025-08-16T08:07:00.000Z'),
+    ),
+    CurrencyPriceEntity(
+      currency: Currency.eur,
+      price: 111476,
+      timeStamp: DateTime.parse('2025-08-16T08:08:00.000Z'),
+    ),
+    CurrencyPriceEntity(
+      currency: Currency.eur,
+      price: 111473.3882,
+      timeStamp: DateTime.parse('2025-08-16T08:09:00.000Z'),
+    ),
+    CurrencyPriceEntity(
+      currency: Currency.eur,
+      price: 111472,
+      timeStamp: DateTime.parse('2025-08-16T08:10:00.000Z'),
+    ),
+  ];
   final euroCurrencyPrice = CurrencyPriceEntity(
     currency: Currency.eur,
     price: 111474.512,
     timeStamp: DateTime.parse('2025-08-16T08:00:03.000Z'),
   );
+  final gbpCurrencyPrices = [
+    CurrencyPriceEntity(
+      currency: Currency.gbp,
+      price: 96190,
+      timeStamp: DateTime.parse('2025-08-16T08:03:00.000Z'),
+    ),
+    CurrencyPriceEntity(
+      currency: Currency.gbp,
+      price: 96190,
+      timeStamp: DateTime.parse('2025-08-16T08:04:00.000Z'),
+    ),
+  ];
   final gbpCurrencyPrice = CurrencyPriceEntity(
     currency: Currency.gbp,
     price: 96190.9385000001,
@@ -156,10 +210,11 @@ void main() {
     mockBtcBloc = MockBtcBloc();
   });
 
-  Widget buildSubject() => BlocProvider<BtcBloc>.value(
-    value: mockBtcBloc,
-    child: const CurrencyHistoryView(currency: Currency.usd),
-  );
+  Widget buildSubject({Currency currency = Currency.usd}) =>
+      BlocProvider<BtcBloc>.value(
+        value: mockBtcBloc,
+        child: CurrencyHistoryView(currency: currency),
+      );
 
   for (int i = 0; i < 2; i++) {
     testGoldens('Initial', (tester) async {
@@ -299,6 +354,72 @@ void main() {
       await multiScreenGolden(
         tester,
         '${i == 0 ? 'darkTheme' : 'lightTheme'}/load_success/load_success',
+      );
+    });
+
+    testGoldens('LoadSuccessWithSomeMissingData', (tester) async {
+      whenListen(
+        mockBtcBloc,
+        Stream<BtcState>.value(
+          BtcState.loadSuccess(
+            currencyPrices: [
+              usdCurrencyPrices.last,
+              euroCurrencyPrices.last,
+              gbpCurrencyPrice,
+            ],
+            currencyPricesHistory: {
+              Currency.usd: usdCurrencyPrices,
+              Currency.gbp: [gbpCurrencyPrice],
+              Currency.eur: euroCurrencyPrices,
+            },
+            timeStamp: gbpCurrencyPrice.timeStamp,
+          ),
+        ),
+        initialState: const BtcState.loading(),
+      );
+
+      await tester.pumpWidgetBuilder(
+        buildSubject(currency: Currency.eur),
+        wrapper: (widget) =>
+            customMaterialAppWrapper(widget, isDarkMode: i == 0),
+      );
+
+      await multiScreenGolden(
+        tester,
+        '${i == 0 ? 'darkTheme' : 'lightTheme'}/load_success_with_some_missing_data/load_success_with_some_missing_data',
+      );
+    });
+
+    testGoldens('LoadSuccessWithTwoSimilarPoints', (tester) async {
+      whenListen(
+        mockBtcBloc,
+        Stream<BtcState>.value(
+          BtcState.loadSuccess(
+            currencyPrices: [
+              usdCurrencyPrices.last,
+              euroCurrencyPrices.last,
+              gbpCurrencyPrices.last,
+            ],
+            currencyPricesHistory: {
+              Currency.usd: usdCurrencyPrices,
+              Currency.gbp: gbpCurrencyPrices,
+              Currency.eur: euroCurrencyPrices,
+            },
+            timeStamp: gbpCurrencyPrices.last.timeStamp,
+          ),
+        ),
+        initialState: const BtcState.loading(),
+      );
+
+      await tester.pumpWidgetBuilder(
+        buildSubject(currency: Currency.gbp),
+        wrapper: (widget) =>
+            customMaterialAppWrapper(widget, isDarkMode: i == 0),
+      );
+
+      await multiScreenGolden(
+        tester,
+        '${i == 0 ? 'darkTheme' : 'lightTheme'}/load_success_with_two_similar_points/load_success_with_two_similar_points',
       );
     });
   }

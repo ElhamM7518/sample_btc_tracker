@@ -14,6 +14,9 @@ part 'btc_bloc.freezed.dart';
 class BtcBloc extends Bloc<BtcEvent, BtcState> {
   final BtcRepository _btcRepository;
   Timer? _refreshTimer;
+  final refreshInterval = EnvironmentVariables.environment == Environment.test
+      ? const Duration(milliseconds: 5)
+      : const Duration(minutes: 1);
 
   BtcBloc(this._btcRepository) : super(const BtcState.initial()) {
     on<BtcEvent>((event, emit) async {
@@ -79,7 +82,28 @@ class BtcBloc extends Bloc<BtcEvent, BtcState> {
             emit(
               BtcState.loadSuccess(
                 currencyPrices: currencyPrices,
-                currencyPricesHistory: currencyPricesHistory,
+                // To keep the correct data of CurrencyPricesHistory in every minute
+                currencyPricesHistory: _appendHistory(
+                  previousHistory: currencyPricesHistory,
+                  usdPrice: currencyPricesHistory[Currency.usd]!.last.copyWith(
+                    timeStamp: currencyPricesHistory[Currency.gbp]!
+                        .last
+                        .timeStamp
+                        .add(refreshInterval),
+                  ),
+                  gbpPrice: currencyPricesHistory[Currency.gbp]!.last.copyWith(
+                    timeStamp: currencyPricesHistory[Currency.gbp]!
+                        .last
+                        .timeStamp
+                        .add(refreshInterval),
+                  ),
+                  eurPrice: currencyPricesHistory[Currency.eur]!.last.copyWith(
+                    timeStamp: currencyPricesHistory[Currency.gbp]!
+                        .last
+                        .timeStamp
+                        .add(refreshInterval),
+                  ),
+                ),
                 timeStamp: timeStamp,
               ),
             );
@@ -107,9 +131,17 @@ class BtcBloc extends Bloc<BtcEvent, BtcState> {
               );
               emit(
                 BtcState.loadSuccess(
-                  currencyPrices: currencyPrices,
-                  currencyPricesHistory: currencyPricesHistory,
-                  timeStamp: timeStamp,
+                  currencyPrices: [...eurData, currencyPrices.last],
+                  currencyPricesHistory: _appendHistory(
+                    previousHistory: currencyPricesHistory,
+                    usdPrice: eurData.first.copyWith(
+                      timeStamp: eurData.last.timeStamp,
+                    ),
+                    gbpPrice: currencyPricesHistory[Currency.gbp]!.last
+                        .copyWith(timeStamp: eurData.last.timeStamp),
+                    eurPrice: eurData.last,
+                  ),
+                  timeStamp: eurData.last.timeStamp,
                 ),
               );
             default:
@@ -135,9 +167,7 @@ class BtcBloc extends Bloc<BtcEvent, BtcState> {
                 ),
               );
               _refreshTimer = Timer.periodic(
-                EnvironmentVariables.environment == Environment.test
-                    ? const Duration(milliseconds: 5)
-                    : const Duration(minutes: 1),
+                refreshInterval,
                 (ticker) => add(const _Loaded()),
               );
             case BtcLoadSuccess(:final currencyPricesHistory):
@@ -145,10 +175,14 @@ class BtcBloc extends Bloc<BtcEvent, BtcState> {
                 BtcState.loadSuccess(
                   currencyPrices: [...eurData, gbpData.last],
                   currencyPricesHistory: _appendHistory(
-                    currencyPricesHistory,
-                    eurData.first.copyWith(timeStamp: gbpData.last.timeStamp),
-                    gbpData.last,
-                    eurData.last.copyWith(timeStamp: gbpData.last.timeStamp),
+                    previousHistory: currencyPricesHistory,
+                    usdPrice: eurData.first.copyWith(
+                      timeStamp: gbpData.last.timeStamp,
+                    ),
+                    gbpPrice: gbpData.last,
+                    eurPrice: eurData.last.copyWith(
+                      timeStamp: gbpData.last.timeStamp,
+                    ),
                   ),
                   timeStamp: gbpData.last.timeStamp,
                 ),
@@ -160,16 +194,16 @@ class BtcBloc extends Bloc<BtcEvent, BtcState> {
     );
   }
 
-  Map<Currency, List<CurrencyPriceEntity>> _appendHistory(
-    Map<Currency, List<CurrencyPriceEntity>> currentHistory,
-    CurrencyPriceEntity usdPrice,
-    CurrencyPriceEntity gbpPrice,
-    CurrencyPriceEntity eurPrice,
-  ) {
+  Map<Currency, List<CurrencyPriceEntity>> _appendHistory({
+    required Map<Currency, List<CurrencyPriceEntity>> previousHistory,
+    required CurrencyPriceEntity usdPrice,
+    required CurrencyPriceEntity gbpPrice,
+    required CurrencyPriceEntity eurPrice,
+  }) {
     return {
-      Currency.usd: [...currentHistory[Currency.usd]!, usdPrice],
-      Currency.gbp: [...currentHistory[Currency.gbp]!, gbpPrice],
-      Currency.eur: [...currentHistory[Currency.eur]!, eurPrice],
+      Currency.usd: [...previousHistory[Currency.usd]!, usdPrice],
+      Currency.gbp: [...previousHistory[Currency.gbp]!, gbpPrice],
+      Currency.eur: [...previousHistory[Currency.eur]!, eurPrice],
     };
   }
 }

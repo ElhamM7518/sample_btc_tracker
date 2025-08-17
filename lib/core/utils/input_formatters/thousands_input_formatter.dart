@@ -10,7 +10,7 @@ class ThousandsSeparatorInputFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     if (newValue.text.isEmpty) {
-      return newValue.copyWith(text: '');
+      return const TextEditingValue(text: '0');
     }
 
     // Remove commas

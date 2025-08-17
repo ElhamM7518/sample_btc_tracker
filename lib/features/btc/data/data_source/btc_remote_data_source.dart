@@ -12,7 +12,10 @@ class BtcRemoteDataSource extends RemoteDataSource {
   Future<Either<HttpClientError, CryptoResponseModel>> fetchBtcCurrency({
     required String currency,
   }) async {
-    final res = await httpClient.get('/v2/ticker/bitcoin/?convert=$currency');
+    final res = await httpClient.get(
+      '/v2/ticker/bitcoin/',
+      queryParameters: {'convert': currency},
+    );
     return res.fold(
       left,
       (res) => right(CryptoResponseModel.fromJson(res! as Json)),

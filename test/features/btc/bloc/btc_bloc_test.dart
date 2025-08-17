@@ -192,27 +192,10 @@ void main() {
           currencyPricesHistory: {
             Currency.usd: [
               usdCurrencyPrice.copyWith(timeStamp: gbpCurrencyPrice.timeStamp),
-              usdCurrencyPrice.copyWith(
-                timeStamp: gbpCurrencyPrice.timeStamp.add(
-                  const Duration(milliseconds: 5),
-                ),
-              ),
             ],
-            Currency.gbp: [
-              gbpCurrencyPrice,
-              gbpCurrencyPrice.copyWith(
-                timeStamp: gbpCurrencyPrice.timeStamp.add(
-                  const Duration(milliseconds: 5),
-                ),
-              ),
-            ],
+            Currency.gbp: [gbpCurrencyPrice],
             Currency.eur: [
               euroCurrencyPrice.copyWith(timeStamp: gbpCurrencyPrice.timeStamp),
-              euroCurrencyPrice.copyWith(
-                timeStamp: gbpCurrencyPrice.timeStamp.add(
-                  const Duration(milliseconds: 5),
-                ),
-              ),
             ],
           },
           timeStamp: gbpCurrencyPrice.timeStamp,
@@ -225,16 +208,8 @@ void main() {
         when(
           mockBtcRepository.fetchBtcCurrency(currency: Currency.eur),
         ).thenAnswer(
-          (realInvocation) async => right([
-            usdCurrencyPrice.copyWith(
-              price: 117491,
-              timeStamp: DateTime.parse('2025-08-16T08:00:00.005Z'),
-            ),
-            euroCurrencyPrice.copyWith(
-              price: 111475,
-              timeStamp: DateTime.parse('2025-08-16T08:00:00.006Z'),
-            ),
-          ]),
+          (realInvocation) async =>
+              right([usdCurrencyPrice, euroCurrencyPrice]),
         );
         when(
           mockBtcRepository.fetchBtcCurrency(currency: Currency.gbp),
@@ -297,39 +272,20 @@ void main() {
         ),
         BtcState.loadSuccess(
           currencyPrices: [
-            usdCurrencyPrice.copyWith(
-              price: 117491,
-              timeStamp: DateTime.parse('2025-08-16T08:00:00.005Z'),
-            ),
-            euroCurrencyPrice.copyWith(
-              price: 111475,
-              timeStamp: DateTime.parse('2025-08-16T08:00:00.006Z'),
-            ),
+            usdCurrencyPrice,
+            euroCurrencyPrice,
             gbpCurrencyPrice,
           ],
           currencyPricesHistory: {
             Currency.usd: [
               usdCurrencyPrice.copyWith(timeStamp: gbpCurrencyPrice.timeStamp),
-              usdCurrencyPrice.copyWith(
-                price: 117491,
-                timeStamp: DateTime.parse('2025-08-16T08:00:00.006Z'),
-              ),
             ],
-            Currency.gbp: [
-              gbpCurrencyPrice,
-              gbpCurrencyPrice.copyWith(
-                timeStamp: DateTime.parse('2025-08-16T08:00:00.006Z'),
-              ),
-            ],
+            Currency.gbp: [gbpCurrencyPrice],
             Currency.eur: [
               euroCurrencyPrice.copyWith(timeStamp: gbpCurrencyPrice.timeStamp),
-              euroCurrencyPrice.copyWith(
-                price: 111475,
-                timeStamp: DateTime.parse('2025-08-16T08:00:00.006Z'),
-              ),
             ],
           },
-          timeStamp: DateTime.parse('2025-08-16T08:00:00.006Z'),
+          timeStamp: gbpCurrencyPrice.timeStamp,
         ),
       ],
     );

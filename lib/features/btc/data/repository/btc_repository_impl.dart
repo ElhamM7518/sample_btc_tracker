@@ -22,17 +22,18 @@ class BtcRepositoryImpl implements BtcRepository {
       if (data.data.containsKey('1') &&
           data.data['1']!.quotes.containsKey(currencyString) &&
           data.data['1']!.quotes[currencyString] != null) {
+        final timeStamp = DateTime.timestamp();
         return right([
           CurrencyPriceEntity(
             currency: Currency.usd,
             price:
                 data.data['1']!.quotes[Currency.usd.name.toUpperCase()]!.price,
-            timeStamp: DateTime.timestamp(),
+            timeStamp: timeStamp,
           ),
           CurrencyPriceEntity(
             currency: currency,
             price: data.data['1']!.quotes[currencyString]!.price,
-            timeStamp: DateTime.timestamp(),
+            timeStamp: timeStamp,
           ),
         ]);
       }

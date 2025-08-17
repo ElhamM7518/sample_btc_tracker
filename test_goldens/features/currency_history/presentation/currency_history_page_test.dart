@@ -154,21 +154,6 @@ void main() {
     ),
     CurrencyPriceEntity(
       currency: Currency.eur,
-      price: 111474.700,
-      timeStamp: DateTime.parse('2025-08-16T08:05:00.000Z'),
-    ),
-    CurrencyPriceEntity(
-      currency: Currency.eur,
-      price: 111474.700,
-      timeStamp: DateTime.parse('2025-08-16T08:06:00.000Z'),
-    ),
-    CurrencyPriceEntity(
-      currency: Currency.eur,
-      price: 111474.700,
-      timeStamp: DateTime.parse('2025-08-16T08:07:00.000Z'),
-    ),
-    CurrencyPriceEntity(
-      currency: Currency.eur,
       price: 111476,
       timeStamp: DateTime.parse('2025-08-16T08:08:00.000Z'),
     ),

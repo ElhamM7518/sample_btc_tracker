@@ -82,28 +82,7 @@ class BtcBloc extends Bloc<BtcEvent, BtcState> {
             emit(
               BtcState.loadSuccess(
                 currencyPrices: currencyPrices,
-                // To keep the correct data of CurrencyPricesHistory in every minute
-                currencyPricesHistory: _appendHistory(
-                  previousHistory: currencyPricesHistory,
-                  usdPrice: currencyPricesHistory[Currency.usd]!.last.copyWith(
-                    timeStamp: currencyPricesHistory[Currency.gbp]!
-                        .last
-                        .timeStamp
-                        .add(refreshInterval),
-                  ),
-                  gbpPrice: currencyPricesHistory[Currency.gbp]!.last.copyWith(
-                    timeStamp: currencyPricesHistory[Currency.gbp]!
-                        .last
-                        .timeStamp
-                        .add(refreshInterval),
-                  ),
-                  eurPrice: currencyPricesHistory[Currency.eur]!.last.copyWith(
-                    timeStamp: currencyPricesHistory[Currency.gbp]!
-                        .last
-                        .timeStamp
-                        .add(refreshInterval),
-                  ),
-                ),
+                currencyPricesHistory: currencyPricesHistory,
                 timeStamp: timeStamp,
               ),
             );
@@ -131,17 +110,9 @@ class BtcBloc extends Bloc<BtcEvent, BtcState> {
               );
               emit(
                 BtcState.loadSuccess(
-                  currencyPrices: [...eurData, currencyPrices.last],
-                  currencyPricesHistory: _appendHistory(
-                    previousHistory: currencyPricesHistory,
-                    usdPrice: eurData.first.copyWith(
-                      timeStamp: eurData.last.timeStamp,
-                    ),
-                    gbpPrice: currencyPricesHistory[Currency.gbp]!.last
-                        .copyWith(timeStamp: eurData.last.timeStamp),
-                    eurPrice: eurData.last,
-                  ),
-                  timeStamp: eurData.last.timeStamp,
+                  currencyPrices: currencyPrices,
+                  currencyPricesHistory: currencyPricesHistory,
+                  timeStamp: timeStamp,
                 ),
               );
             default:

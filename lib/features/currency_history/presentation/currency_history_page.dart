@@ -138,7 +138,7 @@ class _CurrencyHistoryViewState extends State<CurrencyHistoryView> {
                         .map((s) => s.y)
                         .reduce((a, b) => a > b ? a : b);
 
-                    // To showing the chart more user-friendly
+                    // To show the chart more user-friendly as the iOS stocks app :)))
                     final adjustedMinY = minPrice - (maxPrice - minPrice) * 0.3;
                     final adjustedMaxY = maxPrice + (maxPrice - minPrice) * 0.3;
 

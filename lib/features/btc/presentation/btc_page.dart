@@ -135,7 +135,7 @@ class _BtcViewState extends State<BtcView> {
                           vertical: 8,
                         ),
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
+                          horizontal: 8,
                           vertical: 4,
                         ),
                         content: Text(
@@ -146,7 +146,7 @@ class _BtcViewState extends State<BtcView> {
                             serverFailure: (code, message) =>
                                 '${context.l10n.serverError} $message',
                           ),
-                          style: context.textTheme.bodyMedium!.copyWith(
+                          style: context.textTheme.bodySmall!.copyWith(
                             color: context.themeData.scaffoldBackgroundColor,
                           ),
                         ),

@@ -106,9 +106,9 @@ class _ConverterViewState extends State<ConverterView> {
                   mainAxisSize: MainAxisSize.min,
                   spacing: 16,
                   children: [
-                    ShimmerBox(width: double.infinity, height: 30, radius: 8),
-                    ShimmerBox(width: 25, height: 25, shape: BoxShape.circle),
-                    ShimmerBox(width: double.infinity, height: 30, radius: 8),
+                    ShimmerBox(width: double.infinity, height: 40, radius: 8),
+                    ShimmerBox(width: 30, height: 30, shape: BoxShape.circle),
+                    ShimmerBox(width: double.infinity, height: 40, radius: 8),
                   ],
                 );
               case BtcLoadFailure(:final failure):
@@ -172,7 +172,7 @@ class _ConverterViewState extends State<ConverterView> {
                           ),
                           icon: Icon(
                             Icons.currency_exchange_rounded,
-                            size: 25,
+                            size: 30,
                             color: context.themeData.primaryColor,
                           ),
                         ),

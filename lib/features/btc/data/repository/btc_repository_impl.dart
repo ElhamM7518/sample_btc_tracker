@@ -14,30 +14,40 @@ class BtcRepositoryImpl implements BtcRepository {
   Future<Either<CommonFailure, List<CurrencyPriceEntity>>> fetchBtcCurrency({
     required Currency currency,
   }) async {
-    final currencyString = currency.name.toUpperCase();
-    final result = await _remoteDataSource.fetchBtcCurrency(
-      currency: currencyString,
-    );
-    return result.fold((l) => left(l.toCommonFailure()), (data) {
-      if (data.data.containsKey('1') &&
-          data.data['1']!.quotes.containsKey(currencyString) &&
-          data.data['1']!.quotes[currencyString] != null) {
-        final timeStamp = DateTime.timestamp();
-        return right([
-          CurrencyPriceEntity(
-            currency: Currency.usd,
-            price:
-                data.data['1']!.quotes[Currency.usd.name.toUpperCase()]!.price,
-            timeStamp: timeStamp,
-          ),
-          CurrencyPriceEntity(
-            currency: currency,
-            price: data.data['1']!.quotes[currencyString]!.price,
-            timeStamp: timeStamp,
-          ),
-        ]);
-      }
+    try {
+      final currencyString = currency.name.toUpperCase();
+      final result = await _remoteDataSource.fetchBtcCurrency(
+        currency: currencyString,
+      );
+      return result.fold((l) => left(l.toCommonFailure()), (data) {
+        if (data.data.containsKey('1') &&
+            data.data['1']!.quotes.containsKey(currencyString) &&
+            data.data['1']!.quotes[currencyString] != null) {
+          final timeStamp = DateTime.timestamp();
+          return right([
+            CurrencyPriceEntity(
+              currency: Currency.usd,
+              price: data
+                  .data['1']!
+                  .quotes[Currency.usd.name.toUpperCase()]!
+                  .price,
+              timeStamp: timeStamp,
+            ),
+            CurrencyPriceEntity(
+              currency: currency,
+              price: data.data['1']!.quotes[currencyString]!.price,
+              timeStamp: timeStamp,
+            ),
+          ]);
+        }
+        Log.appLogger.e('Failed to parse response!');
+        return left(
+          const CommonFailure.serverFailure(400, 'Invalid response!'),
+        );
+      });
+    } catch (error, st) {
+      Log.appLogger.e('Failed to parse response!', error, st);
       return left(const CommonFailure.serverFailure(400, 'Invalid response!'));
-    });
+    }
   }
 }
